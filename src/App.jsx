@@ -1,28 +1,31 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Search, Users, Package, ShoppingCart, TrendingUp, Briefcase, Building2, Gift, Settings, Home, AlertCircle, ChevronRight, DollarSign, Calendar, Star, Filter, Download, Plus, Edit, Trash2, Eye, Bell, Menu, X } from 'lucide-react';
+import { Search, Users, Package, ShoppingCart, TrendingUp, Briefcase, Home, AlertCircle, ChevronRight, DollarSign, Calendar, Star, Download, Plus, Edit, Trash2, Eye, Bell, Menu, X, Save, Calculator, RefreshCw } from 'lucide-react';
 
-// Mock Data Imports (in a real app, these would be API calls)
-const CUSTOMERS_DATA = [{"customer_id":"c001","first_name":"Emma","last_name":"Rodriguez","email":"emma.rodriguez@email.com","phone":"(555) 234-5678","date_of_birth":"1992-06-15","address_street":"123 Maple Street","address_city":"Springfield","address_state":"IL","address_zip":"62701","loyalty_points":850,"loyalty_tier":"Gold","total_orders":34,"total_spent":425.50,"favorite_flavors":["Mint Chocolate Chip","Salted Caramel"],"dietary_restrictions":[],"marketing_opt_in":true,"created_at":"2024-03-15T10:30:00Z","last_visit":"2026-02-08T14:22:00Z","notes":"Regular customer, loves our seasonal flavors","status":"VIP"},{"customer_id":"c002","first_name":"Marcus","last_name":"Chen","email":"marcus.chen@email.com","phone":"(555) 345-6789","date_of_birth":"1988-11-22","address_street":"456 Oak Avenue","address_city":"Springfield","address_state":"IL","address_zip":"62702","loyalty_points":320,"loyalty_tier":"Silver","total_orders":16,"total_spent":192.75,"favorite_flavors":["Cookie Dough","Vanilla Bean"],"dietary_restrictions":["Nut-Free"],"marketing_opt_in":true,"created_at":"2024-07-22T16:45:00Z","last_visit":"2026-02-05T11:30:00Z","notes":"Allergic to tree nuts","status":"Active"},{"customer_id":"c003","first_name":"Sofia","last_name":"Patel","email":"sofia.patel@email.com","phone":"(555) 456-7890","date_of_birth":"1995-04-08","address_street":"789 Pine Road","address_city":"Springfield","address_state":"IL","address_zip":"62703","loyalty_points":1250,"loyalty_tier":"Platinum","total_orders":52,"total_spent":678.25,"favorite_flavors":["Mango Sorbet","Pistachio"],"dietary_restrictions":["Vegan"],"marketing_opt_in":true,"created_at":"2023-12-01T09:15:00Z","last_visit":"2026-02-09T19:00:00Z","notes":"Always requests vegan options","status":"VIP"},{"customer_id":"c020","first_name":"Daniel","last_name":"Young","email":"daniel.young@email.com","phone":"(555) 123-4568","date_of_birth":"1990-08-09","address_street":"537 Fir Road","address_city":"Springfield","address_state":"IL","address_zip":"62720","loyalty_points":1420,"loyalty_tier":"Platinum","total_orders":58,"total_spent":745.25,"favorite_flavors":["Mint Oreo","Chocolate Chip"],"dietary_restrictions":[],"marketing_opt_in":true,"created_at":"2023-10-08T09:00:00Z","last_visit":"2026-02-10T10:15:00Z","notes":"Most loyal customer","status":"VIP"}];
+// Initial Mock Data
+const INITIAL_CUSTOMERS = [{"customer_id":"c001","first_name":"Emma","last_name":"Rodriguez","email":"emma.rodriguez@email.com","phone":"(555) 234-5678","loyalty_points":850,"loyalty_tier":"Gold","total_orders":34,"total_spent":425.50,"status":"VIP"},{"customer_id":"c002","first_name":"Marcus","last_name":"Chen","email":"marcus.chen@email.com","phone":"(555) 345-6789","loyalty_points":320,"loyalty_tier":"Silver","total_orders":16,"total_spent":192.75,"status":"Active"}];
 
-const INVENTORY_DATA = [{"inventory_id":"inv001","item_name":"Vanilla Bean Ice Cream","category":"Ice Cream","sku":"IC-VAN-001","description":"Premium Madagascar vanilla bean ice cream","current_stock":45.5,"unit_of_measure":"Gallons","reorder_point":20,"reorder_quantity":40,"supplier_id":"sup001","cost_per_unit":12.50,"selling_price":4.99,"storage_location":"Freezer A-1","expiration_date":"2026-05-15","allergens":["Milk"],"flavor_profile":"Classic, creamy, sweet vanilla","popularity_score":95,"last_restocked":"2026-02-01T08:00:00Z","created_at":"2024-01-10T10:00:00Z","status":"In Stock"},{"inventory_id":"inv002","item_name":"Chocolate Fudge Ice Cream","category":"Ice Cream","sku":"IC-CHO-002","description":"Rich dark chocolate with fudge ribbons","current_stock":38.2,"unit_of_measure":"Gallons","reorder_point":20,"reorder_quantity":40,"supplier_id":"sup001","cost_per_unit":13.25,"selling_price":5.49,"storage_location":"Freezer A-2","expiration_date":"2026-05-18","allergens":["Milk","Soy"],"flavor_profile":"Deep chocolate, slightly bitter with sweet fudge","popularity_score":92,"last_restocked":"2026-02-03T08:00:00Z","created_at":"2024-01-10T10:00:00Z","status":"In Stock"},{"inventory_id":"inv005","item_name":"Cookie Dough Ice Cream","category":"Ice Cream","sku":"IC-COO-005","description":"Vanilla ice cream loaded with cookie dough chunks","current_stock":15.3,"unit_of_measure":"Gallons","reorder_point":18,"reorder_quantity":35,"supplier_id":"sup001","cost_per_unit":15.50,"selling_price":5.99,"storage_location":"Freezer B-1","expiration_date":"2026-05-25","allergens":["Milk","Wheat","Eggs","Soy"],"flavor_profile":"Sweet vanilla with buttery dough pieces","popularity_score":94,"last_restocked":"2026-02-08T08:00:00Z","created_at":"2024-01-10T10:00:00Z","status":"Low Stock"},{"inventory_id":"inv010","item_name":"Rocky Road Ice Cream","category":"Ice Cream","sku":"IC-ROC-010","description":"Chocolate ice cream with marshmallows and almonds","current_stock":9.2,"unit_of_measure":"Gallons","reorder_point":12,"reorder_quantity":25,"supplier_id":"sup001","cost_per_unit":14.75,"selling_price":5.99,"storage_location":"Freezer C-2","expiration_date":"2026-05-17","allergens":["Milk","Tree Nuts","Soy"],"flavor_profile":"Chocolate, marshmallow, nutty","popularity_score":87,"last_restocked":"2026-01-25T08:00:00Z","created_at":"2024-01-10T10:00:00Z","status":"Low Stock"}];
+const INITIAL_INVENTORY = [{"inventory_id":"inv001","item_name":"Vanilla Bean Ice Cream","category":"Ice Cream","sku":"IC-VAN-001","current_stock":45.5,"unit_of_measure":"Gallons","reorder_point":20,"cost_per_unit":12.50,"selling_price":4.99,"status":"In Stock"},{"inventory_id":"inv002","item_name":"Chocolate Fudge","category":"Ice Cream","sku":"IC-CHO-002","current_stock":38.2,"unit_of_measure":"Gallons","reorder_point":20,"cost_per_unit":13.25,"selling_price":5.49,"status":"In Stock"},{"inventory_id":"inv005","item_name":"Cookie Dough","category":"Ice Cream","sku":"IC-COO-005","current_stock":15.3,"unit_of_measure":"Gallons","reorder_point":18,"cost_per_unit":15.50,"selling_price":5.99,"status":"Low Stock"}];
 
-const ORDERS_DATA = [{"order_id":"ord001","customer_id":"c001","order_number":"ST-20260210-001","order_date":"2026-02-10T10:30:00Z","order_type":"In-Store","items":[{"inventory_id":"inv001","item_name":"Vanilla Bean Ice Cream","quantity":2,"unit_price":4.99,"customizations":{"size":"Medium","container":"Waffle Cone","toppings":["Rainbow Sprinkles","Hot Fudge"]},"subtotal":9.98}],"subtotal":9.98,"tax_amount":0.80,"discount_amount":0.00,"total_amount":10.78,"payment_method":"Credit Card","payment_status":"Paid","order_status":"Completed","special_instructions":"","served_by":"emp001","delivery_address":null,"estimated_completion":"2026-02-10T10:35:00Z","actual_completion":"2026-02-10T10:34:00Z","loyalty_points_earned":10,"created_at":"2026-02-10T10:30:00Z","updated_at":"2026-02-10T10:34:00Z"},{"order_id":"ord002","customer_id":"c003","order_number":"ST-20260210-002","order_date":"2026-02-10T11:15:00Z","order_type":"In-Store","items":[{"inventory_id":"inv007","item_name":"Mango Sorbet (Vegan)","quantity":1,"unit_price":5.99,"customizations":{"size":"Large","container":"Cup","toppings":[]},"subtotal":5.99}],"subtotal":5.99,"tax_amount":0.48,"discount_amount":0.60,"total_amount":5.87,"payment_method":"Mobile Payment","payment_status":"Paid","order_status":"Completed","special_instructions":"Extra napkins please","served_by":"emp002","delivery_address":null,"estimated_completion":"2026-02-10T11:20:00Z","actual_completion":"2026-02-10T11:18:00Z","loyalty_points_earned":12,"created_at":"2026-02-10T11:15:00Z","updated_at":"2026-02-10T11:18:00Z"}];
-
-const EMPLOYEES_DATA = [{"employee_id":"emp001","first_name":"Courtnei","last_name":"Johnson","email":"courtnei@sweettreats.com","phone":"(555) 111-2222","role":"Manager","hire_date":"2024-01-01","hourly_rate":22.00,"status":"Active","schedule":{"Monday":"9:00 AM - 5:00 PM","Tuesday":"9:00 AM - 5:00 PM","Wednesday":"9:00 AM - 5:00 PM","Thursday":"9:00 AM - 5:00 PM","Friday":"9:00 AM - 5:00 PM","Saturday":"Off","Sunday":"Off"},"certifications":["Food Safety Manager","ServSafe Certified"],"performance_rating":5.0,"total_sales":45280.50,"created_at":"2024-01-01T09:00:00Z"},{"employee_id":"emp002","first_name":"Choyce","last_name":"Williams","email":"choyce@sweettreats.com","phone":"(555) 222-3333","role":"Manager","hire_date":"2024-01-01","hourly_rate":22.00,"status":"Active","schedule":{"Monday":"12:00 PM - 8:00 PM","Tuesday":"12:00 PM - 8:00 PM","Wednesday":"Off","Thursday":"12:00 PM - 8:00 PM","Friday":"12:00 PM - 8:00 PM","Saturday":"10:00 AM - 6:00 PM","Sunday":"Off"},"certifications":["Food Safety Manager","ServSafe Certified"],"performance_rating":5.0,"total_sales":42150.75,"created_at":"2024-01-01T09:00:00Z"},{"employee_id":"emp003","first_name":"Jamie","last_name":"Rodriguez","email":"jamie@sweettreats.com","phone":"(555) 333-4444","role":"Manager","hire_date":"2024-01-01","hourly_rate":22.00,"status":"Active","schedule":{"Monday":"Off","Tuesday":"Off","Wednesday":"10:00 AM - 6:00 PM","Thursday":"10:00 AM - 6:00 PM","Friday":"10:00 AM - 6:00 PM","Saturday":"10:00 AM - 6:00 PM","Sunday":"12:00 PM - 8:00 PM"},"certifications":["Food Safety Manager","ServSafe Certified"],"performance_rating":5.0,"total_sales":38925.25,"created_at":"2024-01-01T09:00:00Z"}];
+const INITIAL_ORDERS = [{"order_id":"ord001","customer_id":"c001","order_number":"ST-001","order_date":new Date().toISOString(),"items":[{"item_name":"Vanilla Bean","quantity":2,"unit_price":4.99}],"total_amount":10.78,"status":"Completed"}];
 
 // Main App Component
 export default function SweetTreatsBackoffice() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // State management with React hooks
+  const [customers, setCustomers] = useState(INITIAL_CUSTOMERS);
+  const [inventory, setInventory] = useState(INITIAL_INVENTORY);
+  const [orders, setOrders] = useState(INITIAL_ORDERS);
 
   const navigation = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'customers', name: 'Customers', icon: Users },
     { id: 'inventory', name: 'Inventory', icon: Package },
     { id: 'orders', name: 'Orders', icon: ShoppingCart },
-    { id: 'employees', name: 'Employees', icon: Briefcase },
+    { id: 'calculator', name: 'Calculator', icon: Calculator },
     { id: 'analytics', name: 'Analytics', icon: TrendingUp },
   ];
 
@@ -47,7 +50,7 @@ export default function SweetTreatsBackoffice() {
                   <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600">
                     Sweet Treats
                   </h1>
-                  <p className="text-xs text-gray-600 font-semibold tracking-wide">BACKOFFICE</p>
+                  <p className="text-xs text-gray-600 font-semibold tracking-wide">BACKOFFICE INTERACTIVE</p>
                 </div>
               </div>
             </div>
@@ -86,7 +89,7 @@ export default function SweetTreatsBackoffice() {
       <div className="max-w-[1920px] mx-auto">
         <div className="flex">
           {/* Sidebar */}
-          <aside className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-20 left-0 w-72 h-[calc(100vh-5rem)] bg-white/60 backdrop-blur-md border-r-4 border-pink-200 p-6 transition-transform duration-300 ease-in-out z-40 shadow-xl`}>
+          <aside className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-20 left-0 w-72 h-[calc(100vh-5rem)] bg-white/60 backdrop-blur-md border-r-4 border-pink-200 p-6 transition-transform duration-300 ease-in-out z-40 shadow-xl overflow-y-auto`}>
             <nav className="space-y-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -114,23 +117,23 @@ export default function SweetTreatsBackoffice() {
 
             <div className="mt-8 p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl border-2 border-pink-300">
               <div className="flex items-center gap-2 mb-2">
-                <Gift className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-800">Quick Tip</h3>
+                <AlertCircle className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-800">Interactive Mode</h3>
               </div>
               <p className="text-sm text-gray-600">
-                Check inventory daily to avoid running out of popular flavors!
+                Add, edit, and calculate in real-time! All changes are saved in your browser.
               </p>
             </div>
           </aside>
 
           {/* Main Content */}
           <main className="flex-1 p-4 sm:p-6 lg:p-8">
-            {currentPage === 'dashboard' && <Dashboard />}
-            {currentPage === 'customers' && <Customers data={CUSTOMERS_DATA} />}
-            {currentPage === 'inventory' && <Inventory data={INVENTORY_DATA} />}
-            {currentPage === 'orders' && <Orders data={ORDERS_DATA} />}
-            {currentPage === 'employees' && <Employees data={EMPLOYEES_DATA} />}
-            {currentPage === 'analytics' && <Analytics />}
+            {currentPage === 'dashboard' && <Dashboard customers={customers} inventory={inventory} orders={orders} />}
+            {currentPage === 'customers' && <Customers customers={customers} setCustomers={setCustomers} />}
+            {currentPage === 'inventory' && <Inventory inventory={inventory} setInventory={setInventory} />}
+            {currentPage === 'orders' && <Orders orders={orders} setOrders={setOrders} customers={customers} inventory={inventory} />}
+            {currentPage === 'calculator' && <Calculator inventory={inventory} />}
+            {currentPage === 'analytics' && <Analytics customers={customers} inventory={inventory} orders={orders} />}
           </main>
         </div>
       </div>
@@ -139,236 +142,334 @@ export default function SweetTreatsBackoffice() {
 }
 
 // Dashboard Component
-function Dashboard() {
-  const stats = [
-    { label: 'Today\'s Sales', value: '$1,247', change: '+12%', icon: DollarSign, color: 'from-green-400 to-emerald-500' },
-    { label: 'Total Customers', value: '50', change: '+3', icon: Users, color: 'from-blue-400 to-cyan-500' },
-    { label: 'Orders Today', value: '28', change: '+8%', icon: ShoppingCart, color: 'from-purple-400 to-pink-500' },
-    { label: 'Low Stock Items', value: '4', change: 'Alert', icon: AlertCircle, color: 'from-orange-400 to-red-500' },
-  ];
+function Dashboard({ customers, inventory, orders }) {
+  const totalSales = orders.reduce((sum, order) => sum + order.total_amount, 0);
+  const lowStockCount = inventory.filter(item => item.status === 'Low Stock' || item.status === 'Out of Stock').length;
+  const totalInventoryValue = inventory.reduce((sum, item) => sum + (item.current_stock * item.cost_per_unit), 0);
+  const avgOrderValue = orders.length > 0 ? totalSales / orders.length : 0;
 
-  const salesData = [
-    { name: 'Mon', sales: 420 },
-    { name: 'Tue', sales: 580 },
-    { name: 'Wed', sales: 650 },
-    { name: 'Thu', sales: 720 },
-    { name: 'Fri', sales: 890 },
-    { name: 'Sat', sales: 1200 },
-    { name: 'Sun', sales: 950 },
-  ];
+  // Customer tier distribution for pie chart
+  const tierData = [
+    { name: 'Bronze', value: customers.filter(c => c.loyalty_tier === 'Bronze').length, color: '#F59E0B' },
+    { name: 'Silver', value: customers.filter(c => c.loyalty_tier === 'Silver').length, color: '#9CA3AF' },
+    { name: 'Gold', value: customers.filter(c => c.loyalty_tier === 'Gold').length, color: '#FBBF24' },
+    { name: 'Platinum', value: customers.filter(c => c.loyalty_tier === 'Platinum').length, color: '#8B5CF6' },
+  ].filter(tier => tier.value > 0);
 
-  const topFlavors = [
-    { name: 'Cookie Dough', value: 28, color: '#F59E0B' },
-    { name: 'Vanilla', value: 25, color: '#F0E68C' },
-    { name: 'Chocolate', value: 22, color: '#8B4513' },
-    { name: 'Mint Chip', value: 15, color: '#98D8C8' },
-    { name: 'Others', value: 10, color: '#EC4899' },
-  ];
+  // Top spending customers
+  const topCustomers = [...customers]
+    .sort((a, b) => b.total_spent - a.total_spent)
+    .slice(0, 5);
 
+  // Inventory status for chart
+  const inventoryStatusData = [
+    { name: 'In Stock', value: inventory.filter(i => i.status === 'In Stock').length, color: '#10B981' },
+    { name: 'Low Stock', value: inventory.filter(i => i.status === 'Low Stock').length, color: '#F59E0B' },
+    { name: 'Out of Stock', value: inventory.filter(i => i.status === 'Out of Stock').length, color: '#EF4444' },
+  ].filter(status => status.value > 0);
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-black text-gray-800 mb-1">Dashboard</h2>
-          <p className="text-gray-600">Welcome back! Here's what's happening today.</p>
+          <p className="text-gray-600">Welcome back! Here's your live business overview.</p>
         </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
-          <Plus className="w-5 h-5 inline mr-2" />
-          New Order
-        </button>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div key={index} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <span className={`text-sm font-bold px-3 py-1 rounded-full ${
-                  stat.change.includes('+') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                }`}>
-                  {stat.change}
-                </span>
-              </div>
-              <p className="text-gray-600 text-sm font-semibold mb-1">{stat.label}</p>
-              <p className="text-3xl font-black text-gray-800">{stat.value}</p>
-            </div>
-          );
-        })}
+        <StatCard 
+          label="Total Sales" 
+          value={`$${totalSales.toFixed(2)}`} 
+          change={orders.length > 0 ? `${orders.length} orders` : 'No orders yet'} 
+          color="from-green-400 to-emerald-500" 
+          icon={DollarSign} 
+        />
+        <StatCard 
+          label="Total Customers" 
+          value={customers.length} 
+          change={customers.length > 0 ? `${customers.filter(c => c.status === 'VIP').length} VIP` : 'Add customers'} 
+          color="from-blue-400 to-cyan-500" 
+          icon={Users} 
+        />
+        <StatCard 
+          label="Avg Order Value" 
+          value={`$${avgOrderValue.toFixed(2)}`} 
+          change={orders.length > 0 ? `${orders.length} total` : 'No orders'} 
+          color="from-purple-400 to-pink-500" 
+          icon={ShoppingCart} 
+        />
+        <StatCard 
+          label="Inventory Alerts" 
+          value={lowStockCount} 
+          change={lowStockCount > 0 ? 'Restock needed' : 'All good'} 
+          color={lowStockCount > 0 ? 'from-orange-400 to-red-500' : 'from-green-400 to-emerald-500'} 
+          icon={AlertCircle} 
+        />
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sales Chart */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-          <h3 className="text-xl font-black text-gray-800 mb-4">Weekly Sales</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={salesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FFB6C1" />
-              <XAxis dataKey="name" stroke="#6B7280" />
-              <YAxis stroke="#6B7280" />
-              <Tooltip contentStyle={{ borderRadius: '12px', border: '2px solid #FFB6C1' }} />
-              <Line type="monotone" dataKey="sales" stroke="#EC4899" strokeWidth={3} dot={{ fill: '#EC4899', r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Customer Distribution */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">Customer Loyalty Tiers</h3>
+          {tierData.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie data={tierData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label>
+                    {tierData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {tierData.map((tier, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tier.color }}></div>
+                    <span className="text-sm font-semibold text-gray-700">{tier.name}: {tier.value}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>No customers yet. Add customers to see distribution!</p>
+            </div>
+          )}
         </div>
 
-        {/* Top Flavors */}
+        {/* Inventory Status */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-          <h3 className="text-xl font-black text-gray-800 mb-4">Top Flavors</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={topFlavors} cx="50%" cy="50%" outerRadius={90} fill="#8884d8" dataKey="value" label>
-                {topFlavors.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+          <h3 className="text-xl font-black text-gray-800 mb-4">Inventory Status</h3>
+          {inventoryStatusData.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie data={inventoryStatusData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label>
+                    {inventoryStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 space-y-2">
+                {inventoryStatusData.map((status, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: status.color }}></div>
+                      <span className="text-sm font-semibold text-gray-700">{status.name}</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-800">{status.value} items</span>
+                  </div>
                 ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="mt-4 space-y-2">
-            {topFlavors.map((flavor, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: flavor.color }}></div>
-                  <span className="text-sm font-semibold text-gray-700">{flavor.name}</span>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>No inventory yet. Add items to track stock!</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Top Customers */}
+      {topCustomers.length > 0 && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">Top Customers</h3>
+          <div className="space-y-3">
+            {topCustomers.map((customer, index) => (
+              <div key={customer.customer_id} className="flex items-center justify-between p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center text-white font-black">
+                    #{index + 1}
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-800">{customer.first_name} {customer.last_name}</p>
+                    <p className="text-sm text-gray-600">{customer.loyalty_tier} • {customer.total_orders} orders</p>
+                  </div>
                 </div>
-                <span className="text-sm font-bold text-gray-800">{flavor.value}%</span>
+                <div className="text-right">
+                  <p className="font-black text-gray-800">${customer.total_spent.toFixed(2)}</p>
+                  <p className="text-xs text-gray-600">{customer.loyalty_points} points</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
+      )}
+
+      {/* Recent Orders */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+        <h3 className="text-xl font-black text-gray-800 mb-4">Recent Orders ({orders.length})</h3>
+        {orders.length > 0 ? (
+          <div className="space-y-3">
+            {orders.slice(0, 5).map((order) => {
+              const customer = customers.find(c => c.customer_id === order.customer_id);
+              return (
+                <div key={order.order_id} className="flex items-center justify-between p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl hover:shadow-md transition-all">
+                  <div>
+                    <p className="font-bold text-gray-800">{order.order_number}</p>
+                    <p className="text-sm text-gray-600">{new Date(order.order_date).toLocaleString()}</p>
+                    {customer && <p className="text-xs text-gray-500">{customer.first_name} {customer.last_name}</p>}
+                  </div>
+                  <div className="text-right">
+                    <p className="font-black text-gray-800">${order.total_amount.toFixed(2)}</p>
+                    <span className="text-xs font-semibold px-3 py-1 bg-green-100 text-green-700 rounded-full">
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p className="mb-2">No orders yet</p>
+            <p className="text-sm">Create your first order in the Orders section!</p>
+          </div>
+        )}
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-        <h3 className="text-xl font-black text-gray-800 mb-4">Recent Orders</h3>
-        <div className="space-y-3">
-          {ORDERS_DATA.slice(0, 5).map((order) => (
-            <div key={order.order_id} className="flex items-center justify-between p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl hover:shadow-md transition-all">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-                  {order.order_number.slice(-2)}
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800">{order.order_number}</p>
-                  <p className="text-sm text-gray-600">{order.order_type} • {new Date(order.order_date).toLocaleTimeString()}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-black text-gray-800">${order.total_amount.toFixed(2)}</p>
-                <span className="text-xs font-semibold px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                  {order.order_status}
-                </span>
-              </div>
-            </div>
-          ))}
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
+          <h4 className="text-sm font-bold text-gray-600 mb-2">Total Inventory Value</h4>
+          <p className="text-3xl font-black text-gray-800">${totalInventoryValue.toFixed(2)}</p>
+          <p className="text-xs text-gray-600 mt-1">{inventory.length} items in stock</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-6">
+          <h4 className="text-sm font-bold text-gray-600 mb-2">Loyalty Points Issued</h4>
+          <p className="text-3xl font-black text-gray-800">
+            {customers.reduce((sum, c) => sum + c.loyalty_points, 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-600 mt-1">Across {customers.length} customers</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6">
+          <h4 className="text-sm font-bold text-gray-600 mb-2">Active Products</h4>
+          <p className="text-3xl font-black text-gray-800">
+            {inventory.filter(i => i.status === 'In Stock').length}
+          </p>
+          <p className="text-xs text-gray-600 mt-1">Ready to sell</p>
         </div>
       </div>
     </div>
   );
 }
 
-// Customers Component
-function Customers({ data }) {
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+function StatCard({ label, value, change, color, icon: Icon }) {
+  return (
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}>
+          <Icon className="w-6 h-6 text-white" />
+        </div>
+        <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+          change.includes('+') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+        }`}>
+          {change}
+        </span>
+      </div>
+      <p className="text-gray-600 text-sm font-semibold mb-1">{label}</p>
+      <p className="text-3xl font-black text-gray-800">{value}</p>
+    </div>
+  );
+}
 
-  const filteredCustomers = useMemo(() => {
-    return data.filter(customer => {
-      const matchesFilter = filter === 'all' || customer.loyalty_tier.toLowerCase() === filter;
-      const matchesSearch = customer.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           customer.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           customer.email.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesFilter && matchesSearch;
-    });
-  }, [data, filter, searchTerm]);
+// Interactive Customers Component
+function Customers({ customers, setCustomers }) {
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    first_name: '', last_name: '', email: '', phone: '', loyalty_points: 0, loyalty_tier: 'Bronze', total_orders: 0, total_spent: 0, status: 'Active'
+  });
 
-  const tierColors = {
-    'Bronze': 'from-orange-400 to-amber-600',
-    'Silver': 'from-gray-400 to-gray-600',
-    'Gold': 'from-yellow-400 to-yellow-600',
-    'Platinum': 'from-purple-400 to-purple-600'
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editingId) {
+      setCustomers(customers.map(c => c.customer_id === editingId ? { ...formData, customer_id: editingId } : c));
+    } else {
+      const newCustomer = { ...formData, customer_id: `c${Date.now()}` };
+      setCustomers([...customers, newCustomer]);
+    }
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({ first_name: '', last_name: '', email: '', phone: '', loyalty_points: 0, loyalty_tier: 'Bronze', total_orders: 0, total_spent: 0, status: 'Active' });
+  };
+
+  const handleEdit = (customer) => {
+    setFormData(customer);
+    setEditingId(customer.customer_id);
+    setShowForm(true);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
+      setCustomers(customers.filter(c => c.customer_id !== id));
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap gap-4">
+      <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-black text-gray-800 mb-1">Customers</h2>
-          <p className="text-gray-600">{data.length} total customers</p>
+          <p className="text-gray-600">{customers.length} total customers</p>
         </div>
-        <div className="flex gap-3">
-          <button className="px-6 py-3 bg-white border-2 border-pink-300 text-gray-700 font-bold rounded-full hover:bg-pink-50 transition-all">
-            <Download className="w-5 h-5 inline mr-2" />
-            Export
-          </button>
-          <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
-            <Plus className="w-5 h-5 inline mr-2" />
-            Add Customer
-          </button>
-        </div>
+        <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
+          <Plus className="w-5 h-5 inline mr-2" />
+          {showForm ? 'Cancel' : 'Add Customer'}
+        </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-        <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[300px]">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search customers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-pink-50/50 border-2 border-pink-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {['all', 'platinum', 'gold', 'silver', 'bronze'].map((tier) => (
-              <button
-                key={tier}
-                onClick={() => setFilter(tier)}
-                className={`px-6 py-3 font-bold rounded-full transition-all ${
-                  filter === tier
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg'
-                    : 'bg-white border-2 border-pink-200 text-gray-700 hover:bg-pink-50'
-                }`}
-              >
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
-              </button>
-            ))}
-          </div>
+      {/* Form */}
+      {showForm && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">{editingId ? 'Edit Customer' : 'Add New Customer'}</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" placeholder="First Name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="text" placeholder="Last Name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="email" placeholder="Email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="tel" placeholder="Phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="number" placeholder="Loyalty Points" value={formData.loyalty_points} onChange={(e) => setFormData({...formData, loyalty_points: parseInt(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <select value={formData.loyalty_tier} onChange={(e) => setFormData({...formData, loyalty_tier: e.target.value})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option>Bronze</option><option>Silver</option><option>Gold</option><option>Platinum</option>
+            </select>
+            <input type="number" step="0.01" placeholder="Total Spent" value={formData.total_spent} onChange={(e) => setFormData({...formData, total_spent: parseFloat(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option>Active</option><option>VIP</option><option>Inactive</option>
+            </select>
+            <button type="submit" className="md:col-span-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all">
+              <Save className="w-5 h-5 inline mr-2" />
+              {editingId ? 'Update Customer' : 'Add Customer'}
+            </button>
+          </form>
         </div>
-      </div>
+      )}
 
       {/* Customer List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredCustomers.map((customer) => (
+        {customers.map((customer) => (
           <div key={customer.customer_id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <div className={`w-16 h-16 bg-gradient-to-br ${tierColors[customer.loyalty_tier]} rounded-full flex items-center justify-center text-white font-black text-xl shadow-lg`}>
-                  {customer.first_name[0]}{customer.last_name[0]}
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-gray-800">
-                    {customer.first_name} {customer.last_name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{customer.email}</p>
-                  <p className="text-sm text-gray-600">{customer.phone}</p>
-                </div>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-black text-gray-800">{customer.first_name} {customer.last_name}</h3>
+                <p className="text-sm text-gray-600">{customer.email}</p>
+                <p className="text-sm text-gray-600">{customer.phone}</p>
               </div>
-              <span className={`px-4 py-2 bg-gradient-to-r ${tierColors[customer.loyalty_tier]} text-white font-bold rounded-full text-sm shadow-lg`}>
+              <span className="px-4 py-2 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold rounded-full text-sm shadow-lg">
                 {customer.loyalty_tier}
               </span>
             </div>
-
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
                 <p className="text-2xl font-black text-gray-800">{customer.total_orders}</p>
@@ -383,23 +484,14 @@ function Customers({ data }) {
                 <p className="text-xs text-gray-600 font-semibold">Points</p>
               </div>
             </div>
-
             <div className="flex gap-2">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
-                <Eye className="w-4 h-4 inline mr-2" />
-                View
+              <button onClick={() => handleEdit(customer)} className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
+                <Edit className="w-4 h-4 inline mr-2" />Edit
               </button>
-              <button className="flex-1 px-4 py-2 bg-white border-2 border-pink-300 text-gray-700 font-bold rounded-full hover:bg-pink-50 transition-all">
-                <Edit className="w-4 h-4 inline mr-2" />
-                Edit
+              <button onClick={() => handleDelete(customer.customer_id)} className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
+                <Trash2 className="w-4 h-4 inline mr-2" />Delete
               </button>
             </div>
-
-            {customer.notes && (
-              <div className="mt-4 p-3 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
-                <p className="text-sm text-gray-700">{customer.notes}</p>
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -407,27 +499,62 @@ function Customers({ data }) {
   );
 }
 
-// Inventory Component
-function Inventory({ data }) {
-  const [categoryFilter, setCategoryFilter] = useState('all');
+// Interactive Inventory Component
+function Inventory({ inventory, setInventory }) {
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    item_name: '', category: 'Ice Cream', sku: '', current_stock: 0, unit_of_measure: 'Gallons', reorder_point: 0, cost_per_unit: 0, selling_price: 0, status: 'In Stock'
+  });
 
-  const categories = ['all', ...new Set(data.map(item => item.category))];
-  const lowStockItems = data.filter(item => item.status === 'Low Stock');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editingId) {
+      setInventory(inventory.map(i => i.inventory_id === editingId ? { ...formData, inventory_id: editingId } : i));
+    } else {
+      const newItem = { ...formData, inventory_id: `inv${Date.now()}` };
+      setInventory([...inventory, newItem]);
+    }
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({ item_name: '', category: 'Ice Cream', sku: '', current_stock: 0, unit_of_measure: 'Gallons', reorder_point: 0, cost_per_unit: 0, selling_price: 0, status: 'In Stock' });
+  };
 
-  const filteredInventory = categoryFilter === 'all' 
-    ? data 
-    : data.filter(item => item.category === categoryFilter);
+  const handleEdit = (item) => {
+    setFormData(item);
+    setEditingId(item.inventory_id);
+    setShowForm(true);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      setInventory(inventory.filter(i => i.inventory_id !== id));
+    }
+  };
+
+  const handleStockUpdate = (id, amount) => {
+    setInventory(inventory.map(item => {
+      if (item.inventory_id === id) {
+        const newStock = item.current_stock + amount;
+        const newStatus = newStock <= item.reorder_point ? 'Low Stock' : newStock === 0 ? 'Out of Stock' : 'In Stock';
+        return { ...item, current_stock: Math.max(0, newStock), status: newStatus };
+      }
+      return item;
+    }));
+  };
+
+  const lowStockItems = inventory.filter(item => item.status === 'Low Stock' || item.status === 'Out of Stock');
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap gap-4">
+      <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-black text-gray-800 mb-1">Inventory</h2>
-          <p className="text-gray-600">{data.length} items • {lowStockItems.length} low stock alerts</p>
+          <p className="text-gray-600">{inventory.length} items • {lowStockItems.length} low stock alerts</p>
         </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
+        <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
           <Plus className="w-5 h-5 inline mr-2" />
-          Add Item
+          {showForm ? 'Cancel' : 'Add Item'}
         </button>
       </div>
 
@@ -436,61 +563,63 @@ function Inventory({ data }) {
         <div className="bg-gradient-to-r from-orange-100 to-red-100 border-2 border-orange-300 rounded-2xl p-6 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
             <AlertCircle className="w-6 h-6 text-orange-600" />
-            <h3 className="text-xl font-black text-gray-800">Low Stock Alert</h3>
+            <h3 className="text-xl font-black text-gray-800">Low Stock Alert - Restock Needed!</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {lowStockItems.map((item) => (
               <div key={item.inventory_id} className="p-4 bg-white rounded-xl">
                 <p className="font-bold text-gray-800">{item.item_name}</p>
                 <p className="text-sm text-gray-600">Stock: {item.current_stock} {item.unit_of_measure}</p>
-                <p className="text-xs text-red-600 font-semibold">Reorder: {item.reorder_point} {item.unit_of_measure}</p>
+                <p className="text-xs text-red-600 font-semibold">Reorder at: {item.reorder_point}</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Category Filter */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setCategoryFilter(category)}
-            className={`px-6 py-3 font-bold rounded-full whitespace-nowrap transition-all ${
-              categoryFilter === category
-                ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg'
-                : 'bg-white border-2 border-pink-200 text-gray-700 hover:bg-pink-50'
-            }`}
-          >
-            {category === 'all' ? 'All Items' : category}
-          </button>
-        ))}
-      </div>
+      {/* Form */}
+      {showForm && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">{editingId ? 'Edit Item' : 'Add New Item'}</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" placeholder="Item Name" value={formData.item_name} onChange={(e) => setFormData({...formData, item_name: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option>Ice Cream</option><option>Toppings</option><option>Cones/Cups</option><option>Syrups</option><option>Supplies</option>
+            </select>
+            <input type="text" placeholder="SKU" value={formData.sku} onChange={(e) => setFormData({...formData, sku: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="number" step="0.1" placeholder="Current Stock" value={formData.current_stock} onChange={(e) => setFormData({...formData, current_stock: parseFloat(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <select value={formData.unit_of_measure} onChange={(e) => setFormData({...formData, unit_of_measure: e.target.value})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option>Gallons</option><option>Pounds</option><option>Units</option><option>Ounces</option>
+            </select>
+            <input type="number" step="0.1" placeholder="Reorder Point" value={formData.reorder_point} onChange={(e) => setFormData({...formData, reorder_point: parseFloat(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="number" step="0.01" placeholder="Cost Per Unit" value={formData.cost_per_unit} onChange={(e) => setFormData({...formData, cost_per_unit: parseFloat(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <input type="number" step="0.01" placeholder="Selling Price" value={formData.selling_price} onChange={(e) => setFormData({...formData, selling_price: parseFloat(e.target.value) || 0})} className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <button type="submit" className="md:col-span-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all">
+              <Save className="w-5 h-5 inline mr-2" />
+              {editingId ? 'Update Item' : 'Add Item'}
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Inventory Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredInventory.map((item) => (
+        {inventory.map((item) => (
           <div key={item.inventory_id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
-                  {item.category}
-                </span>
+                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">{item.category}</span>
                 <h3 className="text-lg font-black text-gray-800 mt-2">{item.item_name}</h3>
                 <p className="text-sm text-gray-600">{item.sku}</p>
               </div>
-              <span className={`px-3 py-1 ${
-                item.status === 'Low Stock' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-              } text-xs font-bold rounded-full`}>
+              <span className={`px-3 py-1 ${item.status === 'Low Stock' || item.status === 'Out of Stock' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} text-xs font-bold rounded-full`}>
                 {item.status}
               </span>
             </div>
 
-            <p className="text-sm text-gray-600 mb-4">{item.description}</p>
-
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-3 bg-blue-50 rounded-xl">
-                <p className="text-xs text-gray-600 font-semibold mb-1">Current Stock</p>
+                <p className="text-xs text-gray-600 font-semibold mb-1">Stock</p>
                 <p className="text-xl font-black text-gray-800">{item.current_stock}</p>
                 <p className="text-xs text-gray-500">{item.unit_of_measure}</p>
               </div>
@@ -501,28 +630,29 @@ function Inventory({ data }) {
               </div>
             </div>
 
-            {item.popularity_score && (
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-semibold text-gray-600">Popularity</span>
-                  <span className="text-xs font-bold text-gray-800">{item.popularity_score}%</span>
-                </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-pink-400 to-purple-500 rounded-full"
-                    style={{ width: `${item.popularity_score}%` }}
-                  ></div>
-                </div>
+            {/* Stock Adjustment */}
+            <div className="mb-4 p-3 bg-gray-50 rounded-xl">
+              <p className="text-xs font-semibold text-gray-600 mb-2">Quick Stock Adjustment</p>
+              <div className="flex gap-2">
+                <button onClick={() => handleStockUpdate(item.inventory_id, -5)} className="flex-1 px-3 py-2 bg-red-100 text-red-700 font-bold rounded-lg hover:bg-red-200 transition-all">-5</button>
+                <button onClick={() => handleStockUpdate(item.inventory_id, -1)} className="flex-1 px-3 py-2 bg-red-100 text-red-700 font-bold rounded-lg hover:bg-red-200 transition-all">-1</button>
+                <button onClick={() => handleStockUpdate(item.inventory_id, 1)} className="flex-1 px-3 py-2 bg-green-100 text-green-700 font-bold rounded-lg hover:bg-green-200 transition-all">+1</button>
+                <button onClick={() => handleStockUpdate(item.inventory_id, 5)} className="flex-1 px-3 py-2 bg-green-100 text-green-700 font-bold rounded-lg hover:bg-green-200 transition-all">+5</button>
               </div>
-            )}
+            </div>
 
             <div className="flex gap-2">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg transition-all text-sm">
-                Update Stock
+              <button onClick={() => handleEdit(item)} className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-full hover:shadow-lg transition-all text-sm">
+                <Edit className="w-4 h-4 inline mr-1" />Edit
               </button>
-              <button className="px-4 py-2 bg-white border-2 border-pink-300 text-gray-700 font-bold rounded-full hover:bg-pink-50 transition-all">
-                <Edit className="w-4 h-4" />
+              <button onClick={() => handleDelete(item.inventory_id)} className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full hover:shadow-lg transition-all text-sm">
+                <Trash2 className="w-4 h-4 inline mr-1" />Delete
               </button>
+            </div>
+
+            <div className="mt-3 text-xs text-gray-600">
+              <p>Cost: ${item.cost_per_unit} • Profit: ${(item.selling_price - item.cost_per_unit).toFixed(2)}</p>
+              <p>Reorder at: {item.reorder_point} {item.unit_of_measure}</p>
             </div>
           </div>
         ))}
@@ -531,241 +661,348 @@ function Inventory({ data }) {
   );
 }
 
-// Orders Component
-function Orders({ data }) {
+// Interactive Orders Component
+function Orders({ orders, setOrders, customers, inventory }) {
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    customer_id: '', item_name: '', quantity: 1, unit_price: 0
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const total = formData.quantity * formData.unit_price;
+    const newOrder = {
+      order_id: `ord${Date.now()}`,
+      order_number: `ST-${orders.length + 1}`,
+      order_date: new Date().toISOString(),
+      customer_id: formData.customer_id,
+      items: [{ item_name: formData.item_name, quantity: formData.quantity, unit_price: formData.unit_price }],
+      total_amount: total,
+      status: 'Completed'
+    };
+    setOrders([...orders, newOrder]);
+    setShowForm(false);
+    setFormData({ customer_id: '', item_name: '', quantity: 1, unit_price: 0 });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this order?')) {
+      setOrders(orders.filter(o => o.order_id !== id));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-black text-gray-800 mb-1">Orders</h2>
-          <p className="text-gray-600">{data.length} orders today</p>
+          <p className="text-gray-600">{orders.length} total orders</p>
         </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
+        <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
           <Plus className="w-5 h-5 inline mr-2" />
-          New Order
+          {showForm ? 'Cancel' : 'New Order'}
         </button>
       </div>
 
+      {/* Form */}
+      {showForm && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">Create New Order</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <select value={formData.customer_id} onChange={(e) => setFormData({...formData, customer_id: e.target.value})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option value="">Select Customer</option>
+              {customers.map(c => <option key={c.customer_id} value={c.customer_id}>{c.first_name} {c.last_name}</option>)}
+            </select>
+            <select value={formData.item_name} onChange={(e) => {
+              const item = inventory.find(i => i.item_name === e.target.value);
+              setFormData({...formData, item_name: e.target.value, unit_price: item?.selling_price || 0});
+            }} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option value="">Select Item</option>
+              {inventory.map(i => <option key={i.inventory_id} value={i.item_name}>{i.item_name} (${i.selling_price})</option>)}
+            </select>
+            <input type="number" min="1" placeholder="Quantity" value={formData.quantity} onChange={(e) => setFormData({...formData, quantity: parseInt(e.target.value) || 1})} required className="px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+            <div className="px-4 py-3 bg-green-50 border-2 border-green-200 rounded-xl flex items-center justify-between">
+              <span className="text-gray-600 font-semibold">Total:</span>
+              <span className="text-2xl font-black text-gray-800">${(formData.quantity * formData.unit_price).toFixed(2)}</span>
+            </div>
+            <button type="submit" className="md:col-span-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all">
+              <Save className="w-5 h-5 inline mr-2" />
+              Create Order
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Orders List */}
       <div className="space-y-4">
-        {data.map((order) => (
-          <div key={order.order_id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-black text-gray-800">{order.order_number}</h3>
-                <p className="text-sm text-gray-600">
-                  {new Date(order.order_date).toLocaleString()} • {order.order_type}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-black text-gray-800">${order.total_amount.toFixed(2)}</p>
-                <span className={`px-4 py-1 ${
-                  order.order_status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                } text-sm font-bold rounded-full`}>
-                  {order.order_status}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              {order.items.map((item, index) => (
-                <div key={index} className="flex justify-between items-center p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
-                  <div className="flex-1">
-                    <p className="font-bold text-gray-800">{item.item_name}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.customizations.size} • {item.customizations.container}
-                      {item.customizations.toppings && item.customizations.toppings.length > 0 && 
-                        ` • ${item.customizations.toppings.join(', ')}`}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-gray-800">Qty: {item.quantity}</p>
-                    <p className="text-sm text-gray-600">${item.subtotal.toFixed(2)}</p>
-                  </div>
+        {orders.map((order) => {
+          const customer = customers.find(c => c.customer_id === order.customer_id);
+          return (
+            <div key={order.order_id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-black text-gray-800">{order.order_number}</h3>
+                  <p className="text-sm text-gray-600">{new Date(order.order_date).toLocaleString()}</p>
+                  {customer && <p className="text-sm text-gray-600">Customer: {customer.first_name} {customer.last_name}</p>}
                 </div>
-              ))}
-            </div>
-
-            {order.special_instructions && (
-              <div className="mt-4 p-3 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
-                <p className="text-sm font-semibold text-gray-700">
-                  📝 {order.special_instructions}
-                </p>
+                <div className="text-right">
+                  <p className="text-2xl font-black text-gray-800">${order.total_amount.toFixed(2)}</p>
+                  <span className="px-4 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-full">{order.status}</span>
+                </div>
               </div>
-            )}
 
-            <div className="mt-4 flex gap-2">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
-                View Details
-              </button>
-              <button className="px-4 py-2 bg-white border-2 border-pink-300 text-gray-700 font-bold rounded-full hover:bg-pink-50 transition-all">
-                Print Receipt
+              <div className="space-y-2 mb-4">
+                {order.items.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                    <div>
+                      <p className="font-bold text-gray-800">{item.item_name}</p>
+                      <p className="text-sm text-gray-600">Qty: {item.quantity} × ${item.unit_price}</p>
+                    </div>
+                    <p className="font-bold text-gray-800">${(item.quantity * item.unit_price).toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+
+              <button onClick={() => handleDelete(order.order_id)} className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
+                <Trash2 className="w-4 h-4 inline mr-2" />
+                Delete Order
               </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// Employees Component
-function Employees({ data }) {
+// Calculator Component
+function Calculator({ inventory }) {
+  const [orderItems, setOrderItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [taxRate, setTaxRate] = useState(8.5);
+  const [discount, setDiscount] = useState(0);
+
+  const addItem = () => {
+    const item = inventory.find(i => i.item_name === selectedItem);
+    if (item) {
+      setOrderItems([...orderItems, { ...item, quantity }]);
+      setSelectedItem('');
+      setQuantity(1);
+    }
+  };
+
+  const removeItem = (index) => {
+    setOrderItems(orderItems.filter((_, i) => i !== index));
+  };
+
+  const subtotal = orderItems.reduce((sum, item) => sum + (item.selling_price * item.quantity), 0);
+  const discountAmount = subtotal * (discount / 100);
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const taxAmount = subtotalAfterDiscount * (taxRate / 100);
+  const total = subtotalAfterDiscount + taxAmount;
+  const profit = orderItems.reduce((sum, item) => sum + ((item.selling_price - item.cost_per_unit) * item.quantity), 0) - discountAmount;
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-black text-gray-800 mb-1">Team Members</h2>
-          <p className="text-gray-600">{data.length} active employees</p>
-        </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:scale-105">
-          <Plus className="w-5 h-5 inline mr-2" />
-          Add Employee
-        </button>
+      <div>
+        <h2 className="text-3xl font-black text-gray-800 mb-1">Order Calculator</h2>
+        <p className="text-gray-600">Calculate order totals, taxes, and profit margins</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {data.map((employee) => (
-          <div key={employee.employee_id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg hover:shadow-2xl transition-all">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-black text-xl shadow-lg">
-                {employee.first_name[0]}{employee.last_name[0]}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-black text-gray-800">
-                  {employee.first_name} {employee.last_name}
-                </h3>
-                <p className="text-sm text-gray-600">{employee.email}</p>
-                <p className="text-sm text-gray-600">{employee.phone}</p>
-                <span className="inline-block mt-2 px-4 py-1 bg-gradient-to-r from-blue-400 to-purple-400 text-white text-sm font-bold rounded-full">
-                  {employee.role}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                <span className="text-lg font-black text-gray-800">{employee.performance_rating}</span>
-              </div>
+        {/* Input Section */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+          <h3 className="text-xl font-black text-gray-800 mb-4">Add Items to Order</h3>
+          
+          <div className="space-y-4 mb-6">
+            <select value={selectedItem} onChange={(e) => setSelectedItem(e.target.value)} className="w-full px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option value="">Select Item</option>
+              {inventory.map(item => (
+                <option key={item.inventory_id} value={item.item_name}>
+                  {item.item_name} - ${item.selling_price} (Stock: {item.current_stock})
+                </option>
+              ))}
+            </select>
+
+            <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} placeholder="Quantity" className="w-full px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
+
+            <button onClick={addItem} disabled={!selectedItem} className="w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              <Plus className="w-5 h-5 inline mr-2" />
+              Add to Order
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Tax Rate (%)</label>
+              <input type="number" step="0.1" value={taxRate} onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)} className="w-full px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="p-3 bg-green-50 rounded-xl">
-                <p className="text-xs text-gray-600 font-semibold mb-1">Total Sales</p>
-                <p className="text-xl font-black text-gray-800">${employee.total_sales.toLocaleString()}</p>
-              </div>
-              <div className="p-3 bg-blue-50 rounded-xl">
-                <p className="text-xs text-gray-600 font-semibold mb-1">Hourly Rate</p>
-                <p className="text-xl font-black text-gray-800">${employee.hourly_rate}/hr</p>
-              </div>
-            </div>
-
-            {employee.certifications && employee.certifications.length > 0 && (
-              <div className="mb-4">
-                <p className="text-xs font-semibold text-gray-600 mb-2">Certifications</p>
-                <div className="flex flex-wrap gap-2">
-                  {employee.certifications.map((cert, index) => (
-                    <span key={index} className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
-                      ✓ {cert}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg transition-all">
-                <Calendar className="w-4 h-4 inline mr-2" />
-                Schedule
-              </button>
-              <button className="px-4 py-2 bg-white border-2 border-pink-300 text-gray-700 font-bold rounded-full hover:bg-pink-50 transition-all">
-                <Edit className="w-4 h-4" />
-              </button>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Discount (%)</label>
+              <input type="number" step="0.1" value={discount} onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)} className="w-full px-4 py-3 bg-pink-50 border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400" />
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Results Section */}
+        <div className="space-y-6">
+          {/* Order Items */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
+            <h3 className="text-xl font-black text-gray-800 mb-4">Order Items ({orderItems.length})</h3>
+            {orderItems.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No items added yet</p>
+            ) : (
+              <div className="space-y-2">
+                {orderItems.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                    <div className="flex-1">
+                      <p className="font-bold text-gray-800">{item.item_name}</p>
+                      <p className="text-sm text-gray-600">{item.quantity} × ${item.selling_price.toFixed(2)}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <p className="font-black text-gray-800">${(item.quantity * item.selling_price).toFixed(2)}</p>
+                      <button onClick={() => removeItem(index)} className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Calculations */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg">
+            <h3 className="text-xl font-black text-gray-800 mb-4 flex items-center gap-2">
+              <Calculator className="w-6 h-6" />
+              Order Summary
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center py-2 border-b border-green-200">
+                <span className="text-gray-700 font-semibold">Subtotal:</span>
+                <span className="text-xl font-bold text-gray-800">${subtotal.toFixed(2)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="flex justify-between items-center py-2 border-b border-green-200">
+                  <span className="text-gray-700 font-semibold">Discount ({discount}%):</span>
+                  <span className="text-xl font-bold text-red-600">-${discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center py-2 border-b border-green-200">
+                <span className="text-gray-700 font-semibold">Tax ({taxRate}%):</span>
+                <span className="text-xl font-bold text-gray-800">${taxAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center py-3 bg-green-100 rounded-xl px-3">
+                <span className="text-gray-800 font-black text-lg">TOTAL:</span>
+                <span className="text-3xl font-black text-green-700">${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center py-3 bg-blue-100 rounded-xl px-3">
+                <span className="text-gray-800 font-black">Profit Margin:</span>
+                <span className="text-2xl font-black text-blue-700">${profit.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <button onClick={() => setOrderItems([])} className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full hover:shadow-xl transition-all">
+              <RefreshCw className="w-5 h-5 inline mr-2" />
+              Clear All
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 // Analytics Component
-function Analytics() {
-  const monthlyRevenue = [
-    { month: 'Jan', revenue: 8420 },
-    { month: 'Feb', revenue: 9150 },
-    { month: 'Mar', revenue: 12300 },
-    { month: 'Apr', revenue: 15800 },
-    { month: 'May', revenue: 18900 },
-    { month: 'Jun', revenue: 22400 },
-  ];
+function Analytics({ customers, inventory, orders }) {
+  const totalRevenue = orders.reduce((sum, order) => sum + order.total_amount, 0);
+  const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
+  const totalCustomers = customers.length;
+  const vipCustomers = customers.filter(c => c.status === 'VIP').length;
 
-  const categoryData = [
-    { name: 'Ice Cream', value: 60, color: '#F59E0B' },
-    { name: 'Toppings', value: 20, color: '#EC4899' },
-    { name: 'Cones', value: 15, color: '#8B5CF6' },
-    { name: 'Other', value: 5, color: '#10B981' },
-  ];
+  const categoryData = {};
+  inventory.forEach(item => {
+    if (!categoryData[item.category]) {
+      categoryData[item.category] = 0;
+    }
+    categoryData[item.category] += item.current_stock * item.cost_per_unit;
+  });
+
+  const pieData = Object.entries(categoryData).map(([name, value], index) => ({
+    name,
+    value,
+    color: ['#F59E0B', '#EC4899', '#8B5CF6', '#10B981', '#3B82F6'][index % 5]
+  }));
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-black text-gray-800 mb-1">Analytics</h2>
-        <p className="text-gray-600">Business performance insights</p>
+        <p className="text-gray-600">Business insights and performance metrics</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
+          <DollarSign className="w-10 h-10 mb-3" />
+          <p className="text-white/80 text-sm font-semibold mb-1">Total Revenue</p>
+          <p className="text-4xl font-black">${totalRevenue.toFixed(2)}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
+          <ShoppingCart className="w-10 h-10 mb-3" />
+          <p className="text-white/80 text-sm font-semibold mb-1">Avg Order Value</p>
+          <p className="text-4xl font-black">${avgOrderValue.toFixed(2)}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
+          <Users className="w-10 h-10 mb-3" />
+          <p className="text-white/80 text-sm font-semibold mb-1">Total Customers</p>
+          <p className="text-4xl font-black">{totalCustomers}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-6 text-white shadow-lg">
+          <Star className="w-10 h-10 mb-3" />
+          <p className="text-white/80 text-sm font-semibold mb-1">VIP Customers</p>
+          <p className="text-4xl font-black">{vipCustomers}</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-          <h3 className="text-xl font-black text-gray-800 mb-4">Monthly Revenue</h3>
+          <h3 className="text-xl font-black text-gray-800 mb-4">Inventory Value by Category</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyRevenue}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FFB6C1" />
-              <XAxis dataKey="month" stroke="#6B7280" />
-              <YAxis stroke="#6B7280" />
-              <Tooltip contentStyle={{ borderRadius: '12px', border: '2px solid #FFB6C1' }} />
-              <Bar dataKey="revenue" fill="url(#colorGradient)" radius={[10, 10, 0, 0]} />
-              <defs>
-                <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#EC4899" />
-                  <stop offset="100%" stopColor="#8B5CF6" />
-                </linearGradient>
-              </defs>
-            </BarChart>
+            <PieChart>
+              <Pie data={pieData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value" label>
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+            </PieChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-pink-200 shadow-lg">
-          <h3 className="text-xl font-black text-gray-800 mb-4">Revenue by Category</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={categoryData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value" label>
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
-          <DollarSign className="w-10 h-10 mb-3" />
-          <p className="text-white/80 text-sm font-semibold mb-1">Average Order Value</p>
-          <p className="text-4xl font-black">$12.47</p>
-          <p className="text-white/90 text-sm mt-2">+8% from last month</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
-          <Users className="w-10 h-10 mb-3" />
-          <p className="text-white/80 text-sm font-semibold mb-1">Customer Retention</p>
-          <p className="text-4xl font-black">87%</p>
-          <p className="text-white/90 text-sm mt-2">+3% from last month</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
-          <TrendingUp className="w-10 h-10 mb-3" />
-          <p className="text-white/80 text-sm font-semibold mb-1">Growth Rate</p>
-          <p className="text-4xl font-black">+23%</p>
-          <p className="text-white/90 text-sm mt-2">Year over year</p>
+          <h3 className="text-xl font-black text-gray-800 mb-4">Customer Loyalty Distribution</h3>
+          <div className="space-y-4">
+            {['Bronze', 'Silver', 'Gold', 'Platinum'].map((tier) => {
+              const count = customers.filter(c => c.loyalty_tier === tier).length;
+              const percentage = totalCustomers > 0 ? (count / totalCustomers) * 100 : 0;
+              return (
+                <div key={tier}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-gray-700">{tier}</span>
+                    <span className="text-sm font-semibold text-gray-600">{count} ({percentage.toFixed(0)}%)</span>
+                  </div>
+                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-pink-400 to-purple-500 rounded-full transition-all" style={{ width: `${percentage}%` }}></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
